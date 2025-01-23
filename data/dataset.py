@@ -9,7 +9,14 @@ class LineTypeDataset(Dataset):
     def __init__(self, data_file_path):
         self.dataset = pd.read_csv(data_file_path)
         self.encoding_size = self.dataset['line'].str.len().max() # one-hot encode to largest string in dataset
-        self.vocab = {c : i for i, c in enumerate(set(''.join(self.dataset['line'])))} # lookup on a character for one-hot index
+
+        # build lookup on a character for one-hot index
+        self.vocab = {}
+        for char in ''.join(self.dataset['line']):
+            if char in self.vocab:
+                continue
+
+            self.vocab.update({char: len(self.vocab)})
 
 
     def __len__(self):
