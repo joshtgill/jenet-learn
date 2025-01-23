@@ -1,22 +1,21 @@
 import argparse
-from data.data_maker import DataMaker
-from data.dataset import LineTypeDataset
+from data.dataset import LineTypeDataset as Dataset
 import learn.learner as learner
 from learn.vectorizer import Vectorizer
 import torch
 
 
 RES_PATH = 'data/res/'
-LINE_TYPE_DATASET_FILE_NAME = 'line_type_dataset.csv'
+DATASET_FILE_NAME = 'dataset.csv'
 MODEL_FILE_PATH = RES_PATH + 'model.pt'
+dataset = Dataset(RES_PATH, DATASET_FILE_NAME, Vectorizer())
 
 
 def make(num_samples):
-    DataMaker(RES_PATH, LINE_TYPE_DATASET_FILE_NAME).make(num_samples)
+    dataset.make(num_samples)
 
 
 def train():
-    dataset = LineTypeDataset(RES_PATH + LINE_TYPE_DATASET_FILE_NAME, Vectorizer())
     model = learner.learn(dataset)
     torch.save({
         'model_state_dict': model.state_dict(),
@@ -27,9 +26,9 @@ def train():
 
 def query(line):
     pred = learner.query(MODEL_FILE_PATH, line)
-    label = next(label for label, values in DataMaker.DATA_SOURCES.items() if values[1] == pred)
+    label = next(label for label, values in Dataset.DATA_SOURCES.items()
+                 if values[1] == pred)
     print(f'{line} is of type {label}')
-
 
 
 if __name__ == '__main__':
