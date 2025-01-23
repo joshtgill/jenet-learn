@@ -1,13 +1,13 @@
 from torch.utils.data import Dataset
 import pandas as pd
 import torch as torch
-import torch.nn.functional as F
 
 
 class LineTypeDataset(Dataset):
 
-    def __init__(self, data_file_path):
+    def __init__(self, data_file_path, vectorizer):
         self.dataset = pd.read_csv(data_file_path)
+        self.vectorizer = vectorizer
         self.encoding_size = self.dataset['line'].str.len().max() # one-hot encode to largest string in dataset
 
         # build lookup on a character for one-hot index
@@ -25,15 +25,5 @@ class LineTypeDataset(Dataset):
 
     def __getitem__(self, idx):
         # Make a one-hot vector for each character in a string
-        one_hot = F.one_hot(
-            torch.tensor([self.vocab.get(c) for c in self.dataset.iloc[idx]['line']]),
-            num_classes=len(self.vocab)
-        )
-
-        # Pad one-hot to largest string length
-        return F.pad(
-            one_hot,
-            (0, 0, 0, self.encoding_size - len(one_hot)),
-            mode='constant',
-            value=0
-        ).to(torch.float32), torch.tensor(self.dataset.iloc[idx]['type'], dtype=torch.float32)
+        return self.vectorizer(self.dataset.iloc[idx]['line'], self.vocab, self.encoding_size), \
+               torch.tensor(self.dataset.iloc[idx]['type'], dtype=torch.float32)
