@@ -1,8 +1,9 @@
 import torch as torch
 import torch.utils.data as D
-from learn.neural_network import NeuralNetwork
+from neural_network import NeuralNetwork
 import torch.nn as nn
-from learn.vectorizer import Vectorizer
+from line_vectorizer import LineVectorizer
+import pandas as pd
 
 
 BATCH_SIZE = 64
@@ -12,6 +13,7 @@ DEVICE = (
     'mps' if torch.backends.mps.is_available() else
     'cpu'
 )
+MODEL_FILE_NAME = 'model.pt'
 
 
 def train(dataloader, model, loss_fn, optimizer):
@@ -46,14 +48,14 @@ def test(dataloader, model, loss_fn):
     print(f'accuracy: {(100 * num_correct):0.1f}%, avg loss: {test_loss:>8f} \n')
 
 
-def learn(dataset):
+def learn(dataset, res_path):
     train_dataset, test_dataset = D.random_split(dataset, [0.80, 0.20])
 
     train_dataloader, test_dataloader = D.DataLoader(train_dataset, batch_size=BATCH_SIZE), \
                                         D.DataLoader(test_dataset, batch_size=BATCH_SIZE)
 
-    model = NeuralNetwork(len(dataset.vocab),
-                          dataset.encoding_size).to(DEVICE)
+    model = NeuralNetwork(len(dataset.vectorizer.vocab),
+                          dataset.vectorizer.embedding_size).to(DEVICE)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
@@ -62,18 +64,21 @@ def learn(dataset):
         train(train_dataloader, model, loss_fn, optimizer)
         test(test_dataloader, model, loss_fn)
 
-    return model
+    torch.save({
+        'model_state_dict': model.state_dict(),
+        'vocab': dataset.vectorizer.vocab,
+        'embedding_size': dataset.vectorizer.embedding_size
+    }, res_path + MODEL_FILE_NAME)
 
 
-def query(model_file_name, line):
-    object = torch.load(model_file_name, weights_only=False)
+def query(res_path, line):
+    object = torch.load(res_path + MODEL_FILE_NAME, weights_only=False)
 
-    model = NeuralNetwork(len(object.get('vocab')), object.get('encoding_size')).to(DEVICE)
+    model = NeuralNetwork(len(object.get('vocab')), object.get('embedding_size')).to(DEVICE)
     model.load_state_dict(object.get('model_state_dict'))
     model.eval()
 
-    return torch.argmax(model(Vectorizer()(
-        line,
+    return torch.argmax(model(LineVectorizer(
         object.get('vocab'),
-        object.get('encoding_size')
-    ).unsqueeze(0).to(DEVICE))).item()
+        object.get('embedding_size')
+    )(pd.DataFrame([line])[0],).unsqueeze(0).to(DEVICE))).item()

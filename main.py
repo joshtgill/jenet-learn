@@ -1,33 +1,34 @@
 import argparse
-from data.dataset import LineTypeDataset as Dataset
-import learn.learner as learner
-from learn.vectorizer import Vectorizer
-import torch
+from data_adapters.price_adapter import PriceAdapter
+from data_adapters.date_adapter import DateAdapter
+from data_adapters.name_adapter import NameAdapter
+from dataset import Dataset as Dataset
+import learner as learner
+from line_vectorizer import LineVectorizer
 
 
-RES_PATH = 'data/res/'
-DATASET_FILE_NAME = 'dataset.csv'
+RES_PATH = 'res/'
 MODEL_FILE_PATH = RES_PATH + 'model.pt'
-dataset = Dataset(RES_PATH, DATASET_FILE_NAME, Vectorizer())
+DATA_SOURCES = {
+    'price': PriceAdapter(),
+    'date': DateAdapter(),
+    'name': NameAdapter(RES_PATH)
+}
+dataset = Dataset(RES_PATH, LineVectorizer)
 
 
 def make(num_samples):
-    dataset.make(num_samples)
+    dataset.make(DATA_SOURCES, num_samples)
 
 
 def train():
-    model = learner.learn(dataset)
-    torch.save({
-        'model_state_dict': model.state_dict(),
-        'vocab': dataset.vocab,
-        'encoding_size': dataset.encoding_size
-    }, MODEL_FILE_PATH)
+    learner.learn(dataset, RES_PATH)
 
 
 def query(line):
-    pred = learner.query(MODEL_FILE_PATH, line)
-    label = next(label for label, values in Dataset.DATA_SOURCES.items()
-                 if values[1] == pred)
+    pred = learner.query(RES_PATH, line)
+    label = next(label for type, (label, _) in enumerate(DATA_SOURCES.items())
+                 if type == pred)
     print(f'{line} is of type {label}')
 
 

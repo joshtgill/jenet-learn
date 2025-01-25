@@ -1,4 +1,4 @@
-from data.adapters.data_adapter import DataAdapter
+from data_adapters.data_adapter import DataAdapter
 from datetime import datetime
 import random
 import calendar
@@ -6,11 +6,7 @@ import calendar
 
 class DateAdapter(DataAdapter):
 
-    def __init__(self, res_path):
-        super().__init__(res_path)
-
-
-    def sample_line(self):
+    def sample(self):
         FORMATS = [
             '%m/%d/%Y',
             '%B %d, %Y'

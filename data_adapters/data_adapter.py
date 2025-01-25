@@ -3,15 +3,11 @@ from abc import abstractmethod
 
 class DataAdapter:
 
-    def __init__(self, res_path):
-        self.res_path = res_path
-
-
     def make(self, num_samples):
         samples = []
         for _ in range(num_samples):
             while True:
-                sample = self.sample_line()
+                sample = self.sample()
                 if sample not in samples:
                     break
             samples.append(sample)
@@ -20,5 +16,5 @@ class DataAdapter:
 
 
     @abstractmethod
-    def sample_line(self):
+    def sample(self):
         pass
