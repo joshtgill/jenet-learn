@@ -8,8 +8,9 @@ class DateAdapter(DataAdapter):
 
     def sample(self):
         FORMATS = [
-            '%m/%d/%Y',
-            '%B %d, %Y'
+            '%m/%d/%Y', # 01/01/1970
+            '%B %-d, %Y', # January 1, 1970
+            '%B %-d'
         ]
 
         year = random.randint(1300, 2100)
