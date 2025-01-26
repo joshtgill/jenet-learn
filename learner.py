@@ -55,7 +55,7 @@ def learn(dataset, res_path):
                                         D.DataLoader(test_dataset, batch_size=BATCH_SIZE)
 
     model = NeuralNetwork(len(dataset.vectorizer.vocab),
-                          dataset.vectorizer.embedding_size).to(DEVICE)
+                          dataset.vectorizer.encoding_size).to(DEVICE)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
@@ -67,18 +67,18 @@ def learn(dataset, res_path):
     torch.save({
         'model_state_dict': model.state_dict(),
         'vocab': dataset.vectorizer.vocab,
-        'embedding_size': dataset.vectorizer.embedding_size
+        'encoding_size': dataset.vectorizer.encoding_size
     }, res_path + MODEL_FILE_NAME)
 
 
 def query(res_path, line):
     object = torch.load(res_path + MODEL_FILE_NAME, weights_only=False)
 
-    model = NeuralNetwork(len(object.get('vocab')), object.get('embedding_size')).to(DEVICE)
+    model = NeuralNetwork(len(object.get('vocab')), object.get('encoding_size')).to(DEVICE)
     model.load_state_dict(object.get('model_state_dict'))
     model.eval()
 
     return torch.argmax(model(LineVectorizer(
         object.get('vocab'),
-        object.get('embedding_size')
+        object.get('encoding_size')
     )(pd.DataFrame([line])[0],).unsqueeze(0).to(DEVICE))).item()

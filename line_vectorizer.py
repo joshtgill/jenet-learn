@@ -4,9 +4,9 @@ import torch.nn.functional as F
 
 class LineVectorizer():
 
-    def __init__(self, vocab, embedding_size):
+    def __init__(self, vocab, encoding_size):
         self.vocab = vocab
-        self.embedding_size = embedding_size
+        self.encoding_size = encoding_size
 
 
     def __call__(self, x):
@@ -21,7 +21,7 @@ class LineVectorizer():
         # Pad one-hot to largest string length
         return F.pad(
             one_hot,
-            (0, 0, 0, self.embedding_size - len(one_hot)),
+            (0, 0, 0, self.encoding_size - len(one_hot)),
             mode='constant',
             value=0
         ).to(torch.float32)

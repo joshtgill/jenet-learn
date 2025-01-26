@@ -3,12 +3,12 @@ from torch import nn
 
 class NeuralNetwork(nn.Module):
 
-    def __init__(self, vocab_size, embedding_size):
+    def __init__(self, vocab_size, encoding_size):
         super().__init__()
 
         self.flatten = nn.Flatten()
         self.stack = nn.Sequential(
-            nn.Linear(vocab_size * embedding_size, 3),
+            nn.Linear(vocab_size * encoding_size, 3),
         )
 
 
