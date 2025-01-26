@@ -4,7 +4,8 @@ from data_adapters.date_adapter import DateAdapter
 from data_adapters.name_adapter import NameAdapter
 from dataset import Dataset as Dataset
 import learner as learner
-from line_vectorizer import LineVectorizer
+from model.line_vectorizer import LineVectorizer
+from model.model import Model
 
 
 RES_PATH = 'res/'
@@ -26,7 +27,7 @@ def train():
 
 
 def query(line):
-    pred = learner.query(RES_PATH, line)
+    pred = Model.load(RES_PATH).query(line)
     label = next(label for type, (label, _) in enumerate(DATA_SOURCES.items())
                  if type == pred)
     print(f'{line} is of type {label}')
