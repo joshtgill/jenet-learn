@@ -6,8 +6,6 @@ from model.model import Model
 
 
 DEVICE = Model.get_device()
-BATCH_SIZE = 64
-NUM_EPOCHS = 5
 MODEL_FILE_NAME = 'model.pt'
 
 
@@ -43,10 +41,10 @@ def test(dataloader, net, loss_fn):
     print(f'accuracy: {(100 * num_correct):0.1f}%, avg loss: {test_loss:>8f} \n')
 
 
-def learn(dataset, res_path):
-    train_dataset, test_dataset = D.random_split(dataset, [0.80, 0.20])
-    train_dataloader, test_dataloader = D.DataLoader(train_dataset, batch_size=BATCH_SIZE), \
-                                        D.DataLoader(test_dataset, batch_size=BATCH_SIZE)
+def learn(dataset, train_ratio, batch_size, num_epochs, res_path):
+    train_dataset, test_dataset = D.random_split(dataset, [train_ratio, 1.0 - train_ratio])
+    train_dataloader, test_dataloader = D.DataLoader(train_dataset, batch_size=batch_size), \
+                                        D.DataLoader(test_dataset, batch_size=batch_size)
 
     net = NeuralNetwork(
         len(dataset.vectorizer.vocab),
@@ -55,7 +53,7 @@ def learn(dataset, res_path):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(net.parameters(), lr=1e-3)
 
-    for e in range(NUM_EPOCHS):
+    for e in range(num_epochs):
         print(f'epoch {e + 1} -')
         train(train_dataloader, net, loss_fn, optimizer)
         test(test_dataloader, net, loss_fn)

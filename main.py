@@ -18,14 +18,6 @@ DATA_SOURCES = {
 dataset = Dataset(RES_PATH, LineVectorizer)
 
 
-def make(num_samples):
-    dataset.make(DATA_SOURCES, num_samples)
-
-
-def train():
-    learner.learn(dataset, RES_PATH)
-
-
 def query(line):
     pred = Model.load(RES_PATH).query(line)
     label = next(label for type, (label, _) in enumerate(DATA_SOURCES.items())
@@ -35,17 +27,20 @@ def query(line):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--make', type=int, metavar='n', help='make a dataset with n total samples')
+    parser.add_argument('-m', '--make', type=int, metavar='<n>', help='make a dataset with n total samples')
     parser.add_argument('-t', '--train', action='store_true', help='train the model with the stored dataset')
-    parser.add_argument('-q', '--query', type=str, metavar='line', help='query the stored model on a given line')
+    parser.add_argument('-q', '--query', type=str, metavar='<line>', help='query the stored model on a given line')
+    parser.add_argument('-r', '--train-ratio', type=float, metavar='<train ratio>', help='the ratio of data to train on', default=0.80)
+    parser.add_argument('-b', '--batches', type=int, metavar='<batch size>', help='the batch size to train on', default=64)
+    parser.add_argument('-e', '--epochs', type=int, metavar='<number of epochs>', help='the number of epochs to train over', default=5)
 
     print()
     args = parser.parse_args()
     if args.make:
-        make(args.make)
+        dataset.make(DATA_SOURCES, args.make)
         print()
     if args.train:
-        train()
+        learner.learn(dataset, args.train_ratio, args.batches, args.epochs, RES_PATH)
         print()
     if args.query:
         query(args.query)
