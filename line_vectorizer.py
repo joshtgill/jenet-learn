@@ -10,18 +10,8 @@ class LineVectorizer():
 
 
     def __call__(self, x):
+        # only 1 x column in dataframe
         x = x.iloc[0]
 
-        # Make a one-hot vector for each character in a string
-        one_hot = F.one_hot(
-            torch.tensor([self.vocab.get(c) for c in x]),
-            num_classes=len(self.vocab)
-        )
-
-        # Pad one-hot to largest string length
-        return F.pad(
-            one_hot,
-            (0, 0, 0, self.encoding_size - len(one_hot)),
-            mode='constant',
-            value=0
-        ).to(torch.float32)
+        tokens = torch.tensor([self.vocab.get(c) for c in x])
+        return F.pad(tokens, (0, self.encoding_size - len(tokens)), value=0)

@@ -11,7 +11,7 @@ class Dataset(TorchDataset):
         self.dataset_file_path = res_path + self.DATASET_FILE_NAME
         self.dataset = pd.read_csv(self.dataset_file_path)
 
-        # build lookup on a character for one-hot index
+        # build vocab/character lookup
         vocab = {}
         for char in ''.join(self.dataset.iloc[:, 0]):
             if char in vocab:
@@ -21,7 +21,7 @@ class Dataset(TorchDataset):
 
         self.vectorizer = Vectorizer(
             vocab,
-            self.dataset.iloc[:, 0].str.len().max() # one-hot encode to largest string in dataset
+            self.dataset.iloc[:, 0].str.len().max() # encode size to largest word in vocab
         )
 
 
@@ -50,6 +50,6 @@ class Dataset(TorchDataset):
 
 
     def __getitem__(self, idx):
-        # Make a one-hot vector for each character in a string
+        # Vectorizer a row
         return self.vectorizer(self.dataset.iloc[idx][: self.dataset.shape[1] - 1]), \
                torch.tensor(self.dataset.iloc[idx].iloc[-1], dtype=torch.float32)
