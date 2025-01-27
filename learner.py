@@ -6,7 +6,6 @@ from model.model import Model
 
 
 DEVICE = Model.get_device()
-MODEL_FILE_NAME = 'model.pt'
 
 
 def train(dataloader, net, loss_fn, optimizer):
@@ -41,7 +40,7 @@ def test(dataloader, net, loss_fn):
     print(f'accuracy: {(100 * num_correct):0.1f}%, avg loss: {test_loss:>8f} \n')
 
 
-def learn(dataset, train_ratio, batch_size, num_epochs, res_path):
+def learn(dataset, train_ratio, batch_size, num_epochs, model_path):
     train_dataset, test_dataset = D.random_split(dataset, [train_ratio, 1.0 - train_ratio])
     train_dataloader, test_dataloader = D.DataLoader(train_dataset, batch_size=batch_size), \
                                         D.DataLoader(test_dataset, batch_size=batch_size)
@@ -58,4 +57,4 @@ def learn(dataset, train_ratio, batch_size, num_epochs, res_path):
         train(train_dataloader, net, loss_fn, optimizer)
         test(test_dataloader, net, loss_fn)
 
-    Model(net, dataset.vectorizer).save(res_path)
+    Model(net, dataset.vectorizer).save(model_path)

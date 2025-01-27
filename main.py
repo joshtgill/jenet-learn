@@ -9,7 +9,7 @@ from model.model import Model
 
 
 RES_PATH = 'res/'
-MODEL_FILE_PATH = RES_PATH + 'model.pt'
+MODEL_PATH = 'model/'
 DATA_SOURCES = {
     'price': PriceAdapter(),
     'date': DateAdapter(),
@@ -19,7 +19,7 @@ dataset = Dataset(RES_PATH, LineVectorizer)
 
 
 def query(line):
-    pred = Model.load(RES_PATH).query(line)
+    pred = Model.load(MODEL_PATH).query(line)
     label = next(label for type, (label, _) in enumerate(DATA_SOURCES.items())
                  if type == pred)
     print(f'{line} is of type {label}')
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         dataset.make(DATA_SOURCES, args.make)
         print()
     if args.train:
-        learner.learn(dataset, args.train_ratio, args.batches, args.epochs, RES_PATH)
+        learner.learn(dataset, args.train_ratio, args.batches, args.epochs, MODEL_PATH)
         print()
     if args.query:
         query(args.query)
