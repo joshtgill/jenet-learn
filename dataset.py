@@ -7,22 +7,9 @@ class Dataset(TorchDataset):
 
     DATASET_FILE_NAME = 'dataset.csv'
 
-    def __init__(self, res_path, Vectorizer):
+    def __init__(self, res_path):
         self.dataset_file_path = res_path + self.DATASET_FILE_NAME
-        self.dataset = pd.read_csv(self.dataset_file_path)
-
-        # build vocab/character lookup
-        vocab = {}
-        for char in ''.join(self.dataset.iloc[:, 0]):
-            if char in vocab:
-                continue
-
-            vocab.update({char: len(vocab)})
-
-        self.vectorizer = Vectorizer(
-            vocab,
-            self.dataset.iloc[:, 0].str.len().max() # encode size to largest word in vocab
-        )
+        self.vectorizer = None
 
 
     def make(self, data_sources, total_num_samples):
@@ -43,6 +30,26 @@ class Dataset(TorchDataset):
         self.dataset.to_csv(self.dataset_file_path, header=False, index=False)
 
         print(f'created dataset with {len(self.dataset):,} samples')
+
+
+    def load(self, Vectorizer):
+        try:
+            self.dataset = pd.read_csv(self.dataset_file_path)
+        except FileNotFoundError:
+            return
+
+        # build vocab/character lookup
+        vocab = {}
+        for char in ''.join(self.dataset.iloc[:, 0]):
+            if char in vocab:
+                continue
+
+            vocab.update({char: len(vocab)})
+
+        self.vectorizer = Vectorizer(
+            vocab,
+            self.dataset.iloc[:, 0].str.len().max() # encode size to largest word in vocab
+        )
 
 
     def __len__(self):

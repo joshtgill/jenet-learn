@@ -15,7 +15,7 @@ DATA_SOURCES = {
     'date': DateAdapter(),
     'name': NameAdapter(RES_PATH)
 }
-dataset = Dataset(RES_PATH, LineVectorizer)
+dataset = Dataset(RES_PATH)
 
 
 def query(line):
@@ -40,6 +40,7 @@ if __name__ == '__main__':
         dataset.make(DATA_SOURCES, args.make)
         print()
     if args.train:
+        dataset.load(LineVectorizer)
         learner.learn(dataset, args.train_ratio, args.batches, args.epochs, MODEL_PATH)
         print()
     if args.query:
