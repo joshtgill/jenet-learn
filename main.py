@@ -2,6 +2,7 @@ import argparse
 from data_adapters.price_adapter import PriceAdapter
 from data_adapters.date_adapter import DateAdapter
 from data_adapters.name_adapter import NameAdapter
+from data_adapters.time_adapter import TimeAdapter
 from dataset import Dataset as Dataset
 import learner as learner
 from model.line_vectorizer import LineVectorizer
@@ -13,6 +14,7 @@ MODEL_PATH = 'model/'
 DATA_SOURCES = {
     'price': PriceAdapter(),
     'date': DateAdapter(),
+    'time': TimeAdapter(),
     'name': NameAdapter(RES_PATH)
 }
 dataset = Dataset(RES_PATH)
