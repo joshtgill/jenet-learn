@@ -9,6 +9,7 @@ class Dataset(TorchDataset):
 
     def __init__(self, res_path):
         self.dataset_file_path = res_path + self.DATASET_FILE_NAME
+        self.dataset = pd.DataFrame()
         self.vectorizer = None
 
 
@@ -16,7 +17,6 @@ class Dataset(TorchDataset):
         # Use remainder to make exact number of total desired samples
         rem = total_num_samples % len(data_sources)
 
-        self.dataset = pd.DataFrame()
         for type, (_, adapter) in enumerate(data_sources.items()):
             num_samples = total_num_samples // len(data_sources)
             if rem > 0:
@@ -50,6 +50,11 @@ class Dataset(TorchDataset):
             vocab,
             self.dataset.iloc[:, 0].str.len().max() # encode size to largest word in vocab
         )
+
+
+    def count_classifiers(self):
+        # track the number of classes in the loaded dataset
+        return self.dataset.iloc[:, -1].nunique()
 
 
     def __len__(self):

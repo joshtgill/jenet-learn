@@ -47,7 +47,8 @@ def learn(dataset, train_ratio, batch_size, num_epochs, model_path):
 
     net = NeuralNetwork(
         len(dataset.vectorizer.vocab),
-        dataset.vectorizer.encoding_size
+        dataset.vectorizer.encoding_size,
+        dataset.count_classifiers()
     ).to(DEVICE)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(net.parameters(), lr=1e-3)
