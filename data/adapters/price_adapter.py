@@ -1,4 +1,4 @@
-from data_adapters.data_adapter import DataAdapter
+from data.adapters.data_adapter import DataAdapter
 import random
 
 

@@ -7,8 +7,8 @@ class Dataset(TorchDataset):
 
     DATASET_FILE_NAME = 'dataset.csv'
 
-    def __init__(self, res_path):
-        self.dataset_file_path = res_path + self.DATASET_FILE_NAME
+    def __init__(self, data_res_path):
+        self.dataset_file_path = data_res_path + self.DATASET_FILE_NAME
         self.dataset = pd.DataFrame()
         self.vectorizer = None
 

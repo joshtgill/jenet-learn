@@ -1,11 +1,11 @@
-from data_adapters.data_adapter import DataAdapter
+from data.adapters.data_adapter import DataAdapter
 import random
 
 
 class CityAdapter(DataAdapter):
 
-    def __init__(self, res_path):
-        with open(f'{res_path}/cities.txt', 'r') as file:
+    def __init__(self, data_res_path):
+        with open(f'{data_res_path}/cities.txt', 'r') as file:
             self.cities = [line.strip() for line in file.readlines()]
 
 

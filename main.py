@@ -1,25 +1,25 @@
 import argparse
-from data_adapters.price_adapter import PriceAdapter
-from data_adapters.date_adapter import DateAdapter
-from data_adapters.name_adapter import NameAdapter
-from data_adapters.time_adapter import TimeAdapter
-from data_adapters.city_adapter import CityAdapter
+from data.adapters.price_adapter import PriceAdapter
+from data.adapters.date_adapter import DateAdapter
+from data.adapters.name_adapter import NameAdapter
+from data.adapters.time_adapter import TimeAdapter
+from data.adapters.city_adapter import CityAdapter
 from dataset import Dataset as Dataset
 import learner as learner
 from model.line_vectorizer import LineVectorizer
 from model.model import Model
 
 
-RES_PATH = 'res/'
+DATA_RES_PATH = 'data/res/'
 MODEL_PATH = 'model/'
 DATA_SOURCES = {
     'price': PriceAdapter(),
     'date': DateAdapter(),
     'time': TimeAdapter(),
-    'name': NameAdapter(RES_PATH),
-    'city': CityAdapter(RES_PATH),
+    'name': NameAdapter(DATA_RES_PATH),
+    'city': CityAdapter(DATA_RES_PATH),
 }
-dataset = Dataset(RES_PATH)
+dataset = Dataset(DATA_RES_PATH)
 
 
 def query(line):
