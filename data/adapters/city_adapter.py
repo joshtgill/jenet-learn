@@ -1,8 +1,8 @@
-from data.adapters.data_adapter import DataAdapter
+from data.adapters.base_adapter import BaseAdapter
 import random
 
 
-class CityAdapter(DataAdapter):
+class CityAdapter(BaseAdapter):
 
     def __init__(self, data_res_path):
         with open(f'{data_res_path}/cities.txt', 'r') as file:

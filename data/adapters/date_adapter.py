@@ -1,10 +1,10 @@
-from data.adapters.data_adapter import DataAdapter
+from data.adapters.base_adapter import BaseAdapter
 from datetime import datetime
 import random
 import calendar
 
 
-class DateAdapter(DataAdapter):
+class DateAdapter(BaseAdapter):
 
     FORMATS = [
         '%m/%d/%Y', # 01/01/1970

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 
-class DataAdapter:
+class BaseAdapter:
 
     def make(self, num_samples):
         MAX_ATTEMPS = 10

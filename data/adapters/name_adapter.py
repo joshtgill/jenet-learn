@@ -1,8 +1,8 @@
-from data.adapters.data_adapter import DataAdapter
+from data.adapters.base_adapter import BaseAdapter
 import random
 
 
-class NameAdapter(DataAdapter):
+class NameAdapter(BaseAdapter):
 
     def __init__(self, data_res_path):
         with open(f'{data_res_path}/first_names.txt', 'r') as file:

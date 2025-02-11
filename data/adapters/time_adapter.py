@@ -1,9 +1,9 @@
-from data.adapters.data_adapter import DataAdapter
+from data.adapters.base_adapter import BaseAdapter
 from datetime import time
 import random
 
 
-class TimeAdapter(DataAdapter):
+class TimeAdapter(BaseAdapter):
 
     FORMATS = [
         '%H:%M', # 13:00
