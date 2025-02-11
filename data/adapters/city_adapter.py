@@ -10,4 +10,15 @@ class CityAdapter(BaseAdapter):
 
 
     def sample(self):
-        return random.choice(self.cities)
+        city = random.choice(self.cities)
+        if random.randint(0, 1):
+            city = city.replace(' ', '')
+        if random.randint(0, 1):
+            city = city.replace(',', '')
+
+        if random.randint(0, 1):
+            city = city.lower()
+        elif random.randint(0, 1):
+            city = city.upper()
+
+        return city
