@@ -1,9 +1,12 @@
 import argparse
+from data.adapters.number_adapter import NumberAdapter
 from data.adapters.price_adapter import PriceAdapter
 from data.adapters.date_adapter import DateAdapter
 from data.adapters.name_adapter import NameAdapter
 from data.adapters.time_adapter import TimeAdapter
 from data.adapters.city_adapter import CityAdapter
+from data.adapters.order_number_adapter import OrderNumberAdapter
+from data.adapters.tracking_number_adapter import TrackingNumberAdapter
 from dataset import Dataset as Dataset
 import learner as learner
 from model.line_vectorizer import LineVectorizer
@@ -13,11 +16,14 @@ from model.model import Model
 DATA_RES_PATH = 'data/res/'
 MODEL_PATH = 'model/'
 DATA_SOURCES = {
+    'number': NumberAdapter(1, 20),
     'price': PriceAdapter(),
     'date': DateAdapter(),
     'time': TimeAdapter(),
     'name': NameAdapter(DATA_RES_PATH),
     'city': CityAdapter(DATA_RES_PATH),
+    'order number': OrderNumberAdapter(),
+    'tracking number': TrackingNumberAdapter()
 }
 dataset = Dataset(DATA_RES_PATH)
 
