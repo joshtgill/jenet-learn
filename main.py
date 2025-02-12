@@ -7,6 +7,7 @@ from data.adapters.time_adapter import TimeAdapter
 from data.adapters.city_adapter import CityAdapter
 from data.adapters.order_number_adapter import OrderNumberAdapter
 from data.adapters.tracking_number_adapter import TrackingNumberAdapter
+from data.adapters.text_adapter import TextAdapter
 from dataset import Dataset as Dataset
 import learner as learner
 from model.line_vectorizer import LineVectorizer
@@ -23,7 +24,9 @@ DATA_SOURCES = {
     'name': NameAdapter(DATA_RES_PATH),
     'city': CityAdapter(DATA_RES_PATH),
     'order number': OrderNumberAdapter(),
-    'tracking number': TrackingNumberAdapter()
+    'tracking number': TrackingNumberAdapter(),
+    'airport': TextAdapter(DATA_RES_PATH + 'airport_codes.txt',
+                           DATA_RES_PATH + 'airport_names.txt')
 }
 dataset = Dataset(DATA_RES_PATH)
 
