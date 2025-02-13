@@ -5,8 +5,6 @@ from data.adapters.date_adapter import DateAdapter
 from data.adapters.name_adapter import NameAdapter
 from data.adapters.time_adapter import TimeAdapter
 from data.adapters.city_adapter import CityAdapter
-from data.adapters.order_number_adapter import OrderNumberAdapter
-from data.adapters.tracking_number_adapter import TrackingNumberAdapter
 from data.adapters.text_adapter import TextAdapter
 from dataset import Dataset as Dataset
 import learner as learner
@@ -17,15 +15,23 @@ from model.model import Model
 DATA_RES_PATH = 'data/res/'
 MODEL_PATH = 'model/'
 DATA_SOURCES = {
-    'number': NumberAdapter(1, 20),
+    'number': NumberAdapter(),
     'price': PriceAdapter(),
     'date': DateAdapter(),
     'time': TimeAdapter(),
     'name': NameAdapter(DATA_RES_PATH + 'first_names.txt',
                         DATA_RES_PATH + 'last_names.txt'),
     'city': CityAdapter(DATA_RES_PATH + 'cities.txt'),
-    'order number': OrderNumberAdapter(),
-    'tracking number': TrackingNumberAdapter(),
+    'order number': NumberAdapter(min_length=5,
+                                  max_length=20,
+                                  contain_digits=True,
+                                  contain_letters=True,
+                                  prefix=''),
+    'tracking number': NumberAdapter(min_length=10,
+                                     max_length=20,
+                                     contain_digits=True,
+                                     contain_letters=True,
+                                     prefix='T-'),
     'airport': TextAdapter(DATA_RES_PATH + 'airport_codes.txt',
                            DATA_RES_PATH + 'airport_names.txt')
 }
