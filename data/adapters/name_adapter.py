@@ -1,8 +1,8 @@
-from data.adapters.base_adapter import BaseAdapter
+from data.adapters.text_adapter import TextAdapter
 import random
 
 
-class NameAdapter(BaseAdapter):
+class NameAdapter(TextAdapter):
 
     FORMATS = [
         '{0}',          # Josh
@@ -25,12 +25,6 @@ class NameAdapter(BaseAdapter):
         '{1},{0:.1}.'   # Gillette,J.
     ]
 
-    def __init__(self, data_res_path):
-        with open(f'{data_res_path}/first_names.txt', 'r') as file:
-            self.first_names = [line.strip() for line in file.readlines()]
-        with open(f'{data_res_path}/last_names.txt', 'r') as file:
-            self.last_names = [line.strip() for line in file.readlines()]
-
 
     def sample(self):
-        return random.choice(self.FORMATS).format(random.choice(self.first_names), random.choice(self.last_names))
+        return random.choice(self.FORMATS).format(random.choice(self.srcs[0]), random.choice(self.srcs[1]))
