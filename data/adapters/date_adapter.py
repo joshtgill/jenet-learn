@@ -1,15 +1,26 @@
-from data.adapters.data_adapter import DataAdapter
+from data.adapters.base_adapter import BaseAdapter
 from datetime import datetime
 import random
 import calendar
 
 
-class DateAdapter(DataAdapter):
+class DateAdapter(BaseAdapter):
 
     FORMATS = [
-        '%m/%d/%Y', # 01/01/1970
+        '%m/%d/%Y',   # 01/01/1970
+        '%m/%d/%y',   # 01/01/70
+        '%-m/%-d/%Y', # 1/1/1970
+        '%-m/%-d/%y', # 1/1/70
+        '%m-%d-%Y',   # 01-01-1970
+        '%m-%d-%y',   # 01-01-70
+        '%-m-%-d-%Y', # 1-1-1970
+        '%-m-%-d-%y', # 1-1-70
+        '%m.%d.%Y',   # 01.01.1970
+        '%m.%d.%y',   # 01.01.70
+        '%-m.%-d.%Y', # 1.1.1970
+        '%-m.%-d.%y', # 1.1.70
         '%B %-d, %Y', # January 1, 1970
-        '%B %-d' # January 1
+        '%B %-d'      # January 1
     ]
 
     def sample(self):

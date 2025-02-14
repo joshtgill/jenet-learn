@@ -1,13 +1,19 @@
-from data.adapters.data_adapter import DataAdapter
+from data.adapters.text_adapter import TextAdapter
 import random
 
 
-class CityAdapter(DataAdapter):
-
-    def __init__(self, data_res_path):
-        with open(f'{data_res_path}/cities.txt', 'r') as file:
-            self.cities = [line.strip() for line in file.readlines()]
-
+class CityAdapter(TextAdapter):
 
     def sample(self):
-        return random.choice(self.cities)
+        city = random.choice(self.srcs[0])
+        if random.randint(0, 1):
+            city = city.replace(' ', '')
+        if random.randint(0, 1):
+            city = city.replace(',', '')
+
+        if random.randint(0, 1):
+            city = city.lower()
+        elif random.randint(0, 1):
+            city = city.upper()
+
+        return city

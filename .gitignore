@@ -176,3 +176,4 @@ cython_debug/
 # Ayos files
 *.csv
 *.pt
+data/res/*.py

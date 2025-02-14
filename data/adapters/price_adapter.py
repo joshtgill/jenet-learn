@@ -1,8 +1,8 @@
-from data.adapters.data_adapter import DataAdapter
+from data.adapters.base_adapter import BaseAdapter
 import random
 
 
-class PriceAdapter(DataAdapter):
+class PriceAdapter(BaseAdapter):
 
     def sample(self):
         oom = random.randint(0, 9) # vary order of magnitude
