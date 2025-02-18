@@ -35,7 +35,8 @@ DATA_SOURCES = {
                                      contain_letters=True,
                                      prefix='T-'),
     'airport': TextAdapter(DATA_RES_PATH + 'airport_codes.txt',
-                           DATA_RES_PATH + 'airport_names.txt')
+                           DATA_RES_PATH + 'airport_names.txt'),
+    'language': TextAdapter(DATA_RES_PATH + 'language.txt')
 }
 dataset = Dataset(DATA_RES_PATH)
 
