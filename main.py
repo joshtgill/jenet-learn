@@ -5,6 +5,7 @@ from data.adapters.date_adapter import DateAdapter
 from data.adapters.name_adapter import NameAdapter
 from data.adapters.time_adapter import TimeAdapter
 from data.adapters.city_adapter import CityAdapter
+from data.adapters.address_adapter import AddressAdapter
 from data.adapters.text_adapter import TextAdapter
 from dataset import Dataset as Dataset
 import learner as learner
@@ -22,6 +23,7 @@ DATA_SOURCES = {
     'name': NameAdapter(DATA_RES_PATH + 'first_names.txt',
                         DATA_RES_PATH + 'last_names.txt'),
     'city': CityAdapter(DATA_RES_PATH + 'cities.txt'),
+    'address': AddressAdapter(DATA_RES_PATH + 'addresses.txt'),
     'order number': NumberAdapter(min_length=5,
                                   max_length=20,
                                   contain_digits=True,
