@@ -5,7 +5,7 @@ import random
 
 class NumberAdapter(BaseAdapter):
 
-    def __init__(self, min_length=0, max_length=9, contain_digits=True, contain_letters=False, prefix=''):
+    def __init__(self, min_length=1, max_length=9, contain_digits=True, contain_letters=False, prefix=''):
         self.min_length = min_length
         self.max_length = max_length
         self.prefix = prefix
@@ -17,9 +17,8 @@ class NumberAdapter(BaseAdapter):
             self.srcs += string.ascii_letters
 
 
-    def sample(self):
-        number = ''.join([random.choice(self.srcs)])
-        for _ in range(random.randint(self.min_length, self.max_length)):
-            number += random.choice(self.srcs)
-
-        return f'{self.prefix}{number}'
+    def sample(self, k):
+        return [
+            f'{self.prefix}{"".join(random.sample(self.srcs, random.randint(self.min_length, self.max_length)))}'
+            for _ in range(k)
+        ]

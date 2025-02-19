@@ -13,8 +13,10 @@ class TimeAdapter(BaseAdapter):
         '%-I:%M%p',  # 1:00PM
     ]
 
-    def sample(self):
-        return time(
-            hour=random.randint(0, 23),
-            minute=random.randint(0, 59)
-        ).strftime(random.choice(self.FORMATS))
+    def sample(self, k):
+        return [
+            time(
+                hour=random.randint(0, 23),
+                minute=random.randint(0, 59)
+            ).strftime(random.choice(self.FORMATS))
+        for _ in range(k)]

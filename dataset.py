@@ -23,9 +23,10 @@ class Dataset(TorchDataset):
                 num_samples += 1
                 rem -= 1
 
+            samples = adapter.sample(num_samples)
             self.dataset = pd.concat([
                 self.dataset,
-                pd.DataFrame([adapter.make(num_samples), [type] * num_samples]).T
+                pd.DataFrame([samples, [type] * len(samples)]).T
             ])
         self.dataset.to_csv(self.dataset_file_path, header=False, index=False)
 

@@ -23,11 +23,15 @@ class DateAdapter(BaseAdapter):
         '%B %-d'      # January 1
     ]
 
-    def sample(self):
-        year = random.randint(1300, 2100)
-        month = random.randint(1, 12)
-        return datetime(
-            year,
-            month,
-            random.randint(1, calendar.monthrange(year, month)[1])
-        ).strftime(random.choice(self.FORMATS))
+    def sample(self, k):
+        samples = []
+        for _ in range(k):
+            year = random.randint(1300, 2100)
+            month = random.randint(1, 12)
+            samples.append(datetime(
+                year,
+                month,
+                random.randint(1, calendar.monthrange(year, month)[1])
+            ).strftime(random.choice(self.FORMATS)))
+
+        return samples

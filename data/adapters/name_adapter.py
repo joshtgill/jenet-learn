@@ -26,5 +26,11 @@ class NameAdapter(TextAdapter):
     ]
 
 
-    def sample(self):
-        return random.choice(self.FORMATS).format(random.choice(self.srcs[0]), random.choice(self.srcs[1]))
+    def sample(self, k):
+        return [
+            random.choice(self.FORMATS).format(
+                random.choice(self.srcs[0]),
+                random.choice(self.srcs[1])
+            )
+            for _ in range(k)
+        ]

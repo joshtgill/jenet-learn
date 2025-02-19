@@ -4,16 +4,17 @@ import random
 
 class AddressAdapter(TextAdapter):
 
-    def sample(self):
-        city = random.choice(self.srcs[0])
-        if random.randint(0, 1):
-            city = city.replace(' ', '')
-        if random.randint(0, 1):
-            city = city.replace(',', '')
+    def sample(self, k):
+        samples = []
+        for _ in range(k):
+            address = random.choice(self.srcs[0])
+            if random.randint(0, 1):
+                address = address.replace(', ', ' ')
+            if random.randint(0, 1):
+                address = address.lower()
+            elif random.randint(0, 1):
+                address = address.upper()
 
-        if random.randint(0, 1):
-            city = city.lower()
-        elif random.randint(0, 1):
-            city = city.upper()
+            samples.append(address)
 
-        return city
+        return samples
