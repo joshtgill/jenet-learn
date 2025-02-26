@@ -1,6 +1,6 @@
 import torch as torch
 import torch.utils.data as D
-from model.neural_network import NeuralNetwork
+from model.nets.fnn import FNN
 import torch.nn as nn
 from model.model import Model
 
@@ -45,7 +45,7 @@ def learn(dataset, train_ratio, batch_size, num_epochs, model_path):
     train_dataloader, test_dataloader = D.DataLoader(train_dataset, batch_size=batch_size), \
                                         D.DataLoader(test_dataset, batch_size=batch_size)
 
-    net = NeuralNetwork(
+    net = FNN(
         len(dataset.vectorizer.vocab),
         dataset.vectorizer.encoding_size,
         dataset.count_classifiers()
