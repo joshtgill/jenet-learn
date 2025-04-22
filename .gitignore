@@ -173,7 +173,7 @@ cython_debug/
 # MacOS
 .DS_Store
 
-# Ayos files
+# Project files
 *.csv
 *.pt
 data/res/*.py
