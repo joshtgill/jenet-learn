@@ -173,7 +173,8 @@ cython_debug/
 # MacOS
 .DS_Store
 
-# Project files
-*.csv
+# Data sources
+data/res/src/
+
+# Model
 *.pt
-data/res/*.py
