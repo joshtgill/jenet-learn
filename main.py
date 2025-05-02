@@ -69,3 +69,6 @@ if __name__ == '__main__':
     if args.query:
         query(args.query)
         print()
+
+    if not (args.make or args.train or args.query):
+        parser.print_help()
