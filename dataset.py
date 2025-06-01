@@ -17,7 +17,7 @@ class Dataset(TorchDataset):
         # Use remainder to make exact number of total desired samples
         rem = total_num_samples % len(data_sources)
 
-        for type, (_, adapter) in enumerate(data_sources.items()):
+        for label, adapter in data_sources.items():
             num_samples = total_num_samples // len(data_sources)
             if rem > 0:
                 num_samples += 1
@@ -26,9 +26,9 @@ class Dataset(TorchDataset):
             samples = adapter.sample(num_samples)
             self.dataset = pd.concat([
                 self.dataset,
-                pd.DataFrame([samples, [type] * len(samples)]).T
+                pd.DataFrame([samples, [label] * len(samples)]).T
             ])
-        self.dataset.to_csv(self.dataset_file_path, header=False, index=False)
+        self.dataset.to_csv(self.dataset_file_path, header=['text', 'label'], index=False)
 
         print(f'created dataset with {len(self.dataset):,} samples')
 

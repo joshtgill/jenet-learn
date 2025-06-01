@@ -16,29 +16,29 @@ from model.model import Model
 DATA_RES_PATH = 'data/res/'
 MODEL_PATH = 'model/'
 DATA_SOURCES = {
-    'number': NumberAdapter(),
-    'price': PriceAdapter(),
-    'date': DateAdapter(),
-    'time': TimeAdapter(),
-    'name': NameAdapter(DATA_RES_PATH + 'first_names.txt',
+    'NUMBER': NumberAdapter(),
+    'PRICE': PriceAdapter(),
+    'DATE': DateAdapter(),
+    'TIME': TimeAdapter(),
+    'NAME': NameAdapter(DATA_RES_PATH + 'first_names.txt',
                         DATA_RES_PATH + 'last_names.txt'),
-    'city': CityAdapter(DATA_RES_PATH + 'cities.txt'),
-    'address': AddressAdapter(DATA_RES_PATH + 'addresses.txt'),
-    'order number': NumberAdapter(min_length=5,
+    'CITY': CityAdapter(DATA_RES_PATH + 'cities.txt'),
+    'ADDRESS': AddressAdapter(DATA_RES_PATH + 'addresses.txt'),
+    'ORDER_NUMBER': NumberAdapter(min_length=5,
                                   max_length=20,
                                   contain_digits=True,
                                   contain_letters=True,
                                   contains_decimal=False,
                                   prefix=''),
-    'tracking number': NumberAdapter(min_length=10,
+    'TRACKING_NUMBER': NumberAdapter(min_length=10,
                                      max_length=20,
                                      contain_digits=True,
                                      contain_letters=True,
                                      contains_decimal=False,
                                      prefix='T-'),
-    'airport': TextAdapter(DATA_RES_PATH + 'airport_codes.txt',
+    'AIRPORT': TextAdapter(DATA_RES_PATH + 'airport_codes.txt',
                            DATA_RES_PATH + 'airport_names.txt'),
-    'language': TextAdapter(DATA_RES_PATH + 'language.txt')
+    'LANGUAGE': TextAdapter(DATA_RES_PATH + 'language.txt')
 }
 dataset = Dataset(DATA_RES_PATH)
 
