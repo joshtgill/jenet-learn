@@ -1,61 +1,73 @@
-import torch as torch
-import torch.utils.data as D
-from model.nets.fnn import FNN
-import torch.nn as nn
-from model.model import Model
+from datasets import load_dataset
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
+from sklearn.preprocessing import LabelEncoder
+import torch
+import joblib
 
 
-DEVICE = Model.get_device()
+DEFAULT_BATCH_SIZE = 16
+DEFAULT_NUM_EPOCHS = 5
 
 
-def train(dataloader, net, loss_fn, optimizer):
-    net.train()
+def train(dataset_path, batch_size, num_epochs):
+    # Load your own dataset (or make a dummy one)
+    dataset = load_dataset("csv", data_files={"train": dataset_path}, split="train")
 
-    for _, (X, y) in enumerate(dataloader):
-        X, y = X.to(DEVICE), y.to(DEVICE)
+    # Encode labels
+    label_encoder = LabelEncoder()
+    label_encoder.fit(dataset["label"])
+    dataset = dataset.map(lambda x: {"label": label_encoder.transform([x["label"]])[0]})
 
-        pred = net(X)
-        loss = loss_fn(pred, y)
+    # Tokenize
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+    def tokenize(batch):
+        return tokenizer(batch["text"], padding=True, truncation=True)
+    dataset = dataset.map(tokenize, batched=True)
 
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
+    # Model
+    model = AutoModelForSequenceClassification.from_pretrained(
+        "distilbert-base-uncased",
+        num_labels=len(label_encoder.classes_)
+    )
+
+    # Trainer
+    training_args = TrainingArguments(
+        per_device_train_batch_size=batch_size,
+        num_train_epochs=num_epochs,
+        output_dir="model/",
+        save_strategy="no"
+    )
+    trainer = Trainer(model=model, args=training_args, train_dataset=dataset)
+
+    # Train
+    trainer.train()
+
+    # Save model, tokenizer, and label encoder
+    model.save_pretrained("model")
+    tokenizer.save_pretrained("model")
+    joblib.dump(label_encoder, "model/label_encoder.joblib")
 
 
-def test(dataloader, net, loss_fn):
-    net.eval()
+def query(line):
+    # Load model, tokenizer, and label encoder
+    model = AutoModelForSequenceClassification.from_pretrained("model")
+    tokenizer = AutoTokenizer.from_pretrained("model")
+    label_encoder = joblib.load("model/label_encoder.joblib")
 
-    dataset_size, num_batches = len(dataloader.dataset), len(dataloader)
-    test_loss, num_correct = 0, 0
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    model.to(device)
+
+    # Tokenize input line
+    inputs = tokenizer([line], padding=True, truncation=True, return_tensors="pt")
+    inputs = {k: v.to(device) for k, v in inputs.items()}
+
+    # Predict
+    model.eval()
     with torch.no_grad():
-        for X, y in dataloader:
-            X, y = X.to(DEVICE), y.to(DEVICE)
+        outputs = model(**inputs)
+        prediction = torch.argmax(outputs.logits, dim=1).cpu().numpy()[0]
 
-            pred = net(X)
-            test_loss += loss_fn(pred, y).item()
-            num_correct += (pred.argmax(1) == y).type(torch.float).sum().item()
-    test_loss /= num_batches
-    num_correct /= dataset_size
+    # Decode prediction to label name
+    predicted_label = label_encoder.inverse_transform([prediction])[0]
 
-    print(f'accuracy: {(100 * num_correct):0.1f}%, avg loss: {test_loss:>8f} \n')
-
-
-def learn(dataset, train_ratio, batch_size, num_epochs, model_path):
-    train_dataset, test_dataset = D.random_split(dataset, [train_ratio, 1.0 - train_ratio])
-    train_dataloader, test_dataloader = D.DataLoader(train_dataset, batch_size=batch_size), \
-                                        D.DataLoader(test_dataset, batch_size=batch_size)
-
-    net = FNN(
-        len(dataset.vectorizer.vocab),
-        dataset.vectorizer.encoding_size,
-        dataset.count_classifiers()
-    ).to(DEVICE)
-    loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(net.parameters(), lr=1e-3)
-
-    for e in range(num_epochs):
-        print(f'epoch {e + 1} -')
-        train(train_dataloader, net, loss_fn, optimizer)
-        test(test_dataloader, net, loss_fn)
-
-    Model(net, dataset.vectorizer).save(model_path)
+    return predicted_label
