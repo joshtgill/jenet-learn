@@ -1,3 +1,0 @@
-[submodule "model"]
-	path = model
-	url = git@github.com:joshtgill/jenet-model.git

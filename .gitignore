@@ -177,4 +177,5 @@ cython_debug/
 data/res/src/
 
 # Model
-*.pt
+dataset.csv
+/model
