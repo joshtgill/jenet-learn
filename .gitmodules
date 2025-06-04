@@ -1,0 +1,3 @@
+[submodule "deploy/proxy"]
+	path = deploy/proxy
+	url = git@github.com:joshtgill/jenet-model-proxy.git
