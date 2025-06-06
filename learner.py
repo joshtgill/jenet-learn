@@ -40,6 +40,10 @@ def train(dataset_path, batch_size, num_epochs):
         num_labels=len(label_encoder.classes_)
     )
 
+    # Set label mappings
+    model.config.id2label = {i: label for i, label in enumerate(label_encoder.classes_)}
+    model.config.label2id = {label: i for i, label in enumerate(label_encoder.classes_)}
+
     # Trainer
     training_args = TrainingArguments(
         per_device_train_batch_size=batch_size,
