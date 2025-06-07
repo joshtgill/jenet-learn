@@ -1,12 +1,20 @@
 from datasets import load_dataset
+from deploy.deployer import MODEL_PATH
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from sklearn.preprocessing import LabelEncoder
-import torch
+from functools import partial
 import joblib
+import torch
+import requests
+import json
 
 
 DEFAULT_BATCH_SIZE = 16
 DEFAULT_NUM_EPOCHS = 5
+
+
+def tokenize(batch, tokenizer):
+    return tokenizer(batch["text"], padding=True, truncation=True)
 
 
 def train(dataset_path, batch_size, num_epochs):
@@ -20,9 +28,11 @@ def train(dataset_path, batch_size, num_epochs):
 
     # Tokenize
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
-    def tokenize(batch):
-        return tokenizer(batch["text"], padding=True, truncation=True)
-    dataset = dataset.map(tokenize, batched=True)
+    tokenizer_helper = partial(
+        tokenize,
+        tokenizer=tokenizer
+    )
+    dataset = dataset.map(tokenizer_helper, batched=True)
 
     # Model
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -30,11 +40,15 @@ def train(dataset_path, batch_size, num_epochs):
         num_labels=len(label_encoder.classes_)
     )
 
+    # Set label mappings
+    model.config.id2label = {i: label for i, label in enumerate(label_encoder.classes_)}
+    model.config.label2id = {label: i for i, label in enumerate(label_encoder.classes_)}
+
     # Trainer
     training_args = TrainingArguments(
         per_device_train_batch_size=batch_size,
         num_train_epochs=num_epochs,
-        output_dir="model/",
+        output_dir=MODEL_PATH,
         save_strategy="no"
     )
     trainer = Trainer(model=model, args=training_args, train_dataset=dataset)
@@ -43,16 +57,26 @@ def train(dataset_path, batch_size, num_epochs):
     trainer.train()
 
     # Save model, tokenizer, and label encoder
-    model.save_pretrained("model")
-    tokenizer.save_pretrained("model")
-    joblib.dump(label_encoder, "model/label_encoder.joblib")
+    model.save_pretrained(MODEL_PATH)
+    tokenizer.save_pretrained(MODEL_PATH)
+    joblib.dump(label_encoder, f"{MODEL_PATH}/label_encoder.joblib")
 
 
-def query(line):
-    # Load model, tokenizer, and label encoder
-    model = AutoModelForSequenceClassification.from_pretrained("model")
-    tokenizer = AutoTokenizer.from_pretrained("model")
-    label_encoder = joblib.load("model/label_encoder.joblib")
+def query(line, deployed=False):
+    if deployed:
+        response = requests.post(
+            "https://model.jenet.ai/query",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps({"text": line})
+        )
+        if response.status_code == 200:
+            return response.json()[0].get("label")
+        else:
+            raise RuntimeError(f"API request failed: {response.status_code} {response.text}")
+
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+    label_encoder = joblib.load(f"{MODEL_PATH}/label_encoder.joblib")
 
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     model.to(device)

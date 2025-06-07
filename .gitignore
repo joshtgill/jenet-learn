@@ -178,4 +178,5 @@ data/res/src/
 
 # Model
 dataset.csv
-/model
+model/
+deploy/model.tar.gz
